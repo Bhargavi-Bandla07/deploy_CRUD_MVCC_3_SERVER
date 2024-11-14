@@ -10,16 +10,22 @@ const fileRoutes = require('./routes/fileRoutes');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// Use CORS and specify the frontend origin
+app.use(cors({ origin: 'https://deploy-crud-mvcc-3.onrender.com' }));
 app.use(bodyParser.json());
 
+// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+  .catch(err => console.log('MongoDB connection error:', err));
 
-app.use('/api', studentRoutes);
-app.use('/api', facultyRoutes); // Add faculty routes
-app.use('/api', fileRoutes);
+// Define routes with specific base paths
+app.use('/api/students', studentRoutes);   // Student routes
+app.use('/api/faculty', facultyRoutes);     // Faculty routes
+app.use('/api/files', fileRoutes);          // File routes
+
+// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
